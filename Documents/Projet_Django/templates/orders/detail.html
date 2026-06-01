@@ -1,9 +1,60 @@
 {% extends "base.html" %}
 {% block title %}Commande #{{ order.id }}{% endblock %}
 {% block content %}
+<div class="mb-3">
+  <a href="{% url 'orders:history' %}" class="btn btn-secondary btn-sm">← Retour</a>
+</div>
 <h1 class="h3">Commande #{{ order.id }}</h1>
-<p>Statut : <strong>{{ order.get_status_display }}</strong></p>
-<p>{{ order.full_name }} - {{ order.phone }}<br>{{ order.address }}, {{ order.city }}</p>
+{% if user.is_staff %}
+  <div class="alert alert-info">
+    <strong>Client :</strong> {{ order.full_name }} ({{ order.user.username }})<br>
+    <strong>Téléphone :</strong> {{ order.phone }}<br>
+    <strong>Adresse :</strong> {{ order.address }}, {{ order.city }}
+  </div>
+{% else %}
+  <p>{{ order.full_name }} - {{ order.phone }}<br>{{ order.address }}, {{ order.city }}</p>
+{% endif %}
+
+<div class="card mb-4">
+  <div class="card-header bg-light">
+    <h5 class="mb-0">Statut de la commande</h5>
+  </div>
+  <div class="card-body">
+    <div class="mb-3">
+      {% if order.status == 'pending' %}
+        <span class="badge bg-warning p-2">{{ order.get_status_display }}</span>
+      {% elif order.status == 'confirmed' %}
+        <span class="badge bg-info p-2">{{ order.get_status_display }}</span>
+      {% elif order.status == 'preparing' %}
+        <span class="badge bg-primary p-2">{{ order.get_status_display }}</span>
+      {% elif order.status == 'shipped' %}
+        <span class="badge bg-success p-2">{{ order.get_status_display }}</span>
+      {% elif order.status == 'delivered' %}
+        <span class="badge bg-dark p-2">{{ order.get_status_display }}</span>
+      {% elif order.status == 'cancelled' %}
+        <span class="badge bg-danger p-2">{{ order.get_status_display }}</span>
+      {% else %}
+        <span class="badge bg-secondary p-2">{{ order.get_status_display }}</span>
+      {% endif %}
+      <small class="text-muted ms-2">Créée le {{ order.created_at|date:"d/m/Y à H:i" }}</small>
+    </div>
+    {% if user.is_staff %}
+      <form method="post" action="{% url 'orders:update_status' order.id %}" class="d-flex gap-2 flex-wrap">
+        {% csrf_token %}
+        <div class="flex-grow-1">
+          <select name="status" class="form-select form-select-sm">
+            <option value="">Changer le statut...</option>
+            {% for value, label in order.STATUS_CHOICES %}
+              <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Mettre à jour</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
 <table class="table">
   <thead><tr><th>Livre</th><th>Quantite</th><th>Prix unitaire</th><th>Total</th></tr></thead>
   <tbody>{% for item in order.items.all %}<tr><td>{{ item.product.title }}</td><td>{{ item.quantity }}</td><td>{{ item.unit_price }} DH</td><td>{{ item.subtotal }} DH</td></tr>{% endfor %}</tbody>

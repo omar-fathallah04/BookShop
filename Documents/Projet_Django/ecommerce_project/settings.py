@@ -56,7 +56,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ecommerce_project.wsgi.application"
 
-if (not DEBUG) or os.getenv("POSTGRES_HOST"):
+if os.getenv("MYSQL_HOST") or os.getenv("MYSQL_DATABASE"):
+    # Use MySQL when MySQL environment variables are provided.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.getenv("MYSQL_DATABASE", "ecommerce_db"),
+            "USER": os.getenv("MYSQL_USER", "ecommerce_user"),
+            "PASSWORD": os.getenv("MYSQL_PASSWORD", "password"),
+            "HOST": os.getenv("MYSQL_HOST", "db"),
+            "PORT": os.getenv("MYSQL_PORT", "3306"),
+        }
+    }
+elif (not DEBUG) or os.getenv("POSTGRES_HOST"):
     # In production (DEBUG=False) or when POSTGRES_HOST is provided, use PostgreSQL.
     DATABASES = {
         "default": {

@@ -1,12 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Commandes{% endblock %}
 {% block content %}
-<h1 class="h3 mb-3">Historique des commandes</h1>
+<h1 class="h3 mb-3">{% if user.is_staff %}Toutes les commandes{% else %}Historique de vos commandes{% endif %}</h1>
 <div class="list-group">
   {% for order in orders %}
-    <a class="list-group-item list-group-item-action d-flex justify-content-between" href="{% url 'orders:detail' order.id %}">
-      <span>Commande #{{ order.id }} - {{ order.created_at|date:"d/m/Y H:i" }}</span>
-      <span>{{ order.get_status_display }} - {{ order.total_amount }} DH</span>
+    <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" href="{% url 'orders:detail' order.id %}">
+      <div>
+        <strong>Commande #{{ order.id }}</strong> - {{ order.created_at|date:"d/m/Y H:i" }}
+        {% if user.is_staff %}<br><small class="text-muted">Client : {{ order.full_name }} ({{ order.user.username }})</small>{% endif %}
+      </div>
+      <div class="text-end">
+        {% if order.status == 'pending' %}
+          <span class="badge bg-warning">{{ order.get_status_display }}</span>
+        {% elif order.status == 'confirmed' %}
+          <span class="badge bg-info">{{ order.get_status_display }}</span>
+        {% elif order.status == 'preparing' %}
+          <span class="badge bg-primary">{{ order.get_status_display }}</span>
+        {% elif order.status == 'shipped' %}
+          <span class="badge bg-success">{{ order.get_status_display }}</span>
+        {% elif order.status == 'delivered' %}
+          <span class="badge bg-dark">{{ order.get_status_display }}</span>
+        {% elif order.status == 'cancelled' %}
+          <span class="badge bg-danger">{{ order.get_status_display }}</span>
+        {% else %}
+          <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+        {% endif %}
+        <br><strong>{{ order.total_amount }} DH</strong>
+      </div>
     </a>
   {% empty %}
     <p>Aucune commande.</p>

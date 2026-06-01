@@ -63,6 +63,25 @@ class Order(models.Model):
         cart.items.all().delete()
         return order
 
+    def set_status(self, status):
+        self.status = status
+        self.save(update_fields=["status"])
+
+    def confirm(self):
+        self.set_status(self.CONFIRMED)
+
+    def prepare(self):
+        self.set_status(self.PREPARING)
+
+    def ship(self):
+        self.set_status(self.SHIPPED)
+
+    def deliver(self):
+        self.set_status(self.DELIVERED)
+
+    def cancel(self):
+        self.set_status(self.CANCELLED)
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
