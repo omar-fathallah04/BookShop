@@ -1,0 +1,13 @@
+APP_PORT=8022
+DOCKER_IMAGE=your-dockerhub-username/bookshop-django:latest
+DEBUG=False
+SECRET_KEY=replace-with-a-long-random-secret-key
+ALLOWED_HOSTS=your-domain.com,localhost,127.0.0.1
+CSRF_TRUSTED_ORIGINS=https://your-domain.com,http://your-domain.com,http://localhost:8022,http://127.0.0.1:8022
+DB_NAME=ecommerce_db
+DB_USER=ecommerce_user
+DB_PASSWORD=replace-with-a-strong-db-password
+DB_HOST=db
+DB_PORT=5432
+SECURE_SSL_REDIRECT=False
+SECURE_HSTS_SECONDS=0

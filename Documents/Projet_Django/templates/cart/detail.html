@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Panier{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Panier</h1>
+{% if cart.items.exists %}
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>Livre</th><th>Prix</th><th>Quantite</th><th>Sous-total</th><th></th></tr></thead>
+      <tbody>
+        {% for item in cart.items.all %}
+          <tr>
+            <td>{{ item.product.title }}</td>
+            <td>{{ item.product.price }} DH</td>
+            <td>
+              <form method="post" action="{% url 'cart:update' item.id %}" class="d-flex gap-2">{% csrf_token %}
+                <input class="form-control qty-input" type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock_quantity }}">
+                <button class="btn btn-outline-dark btn-sm">OK</button>
+              </form>
+            </td>
+            <td>{{ item.subtotal }} DH</td>
+            <td><a class="btn btn-outline-danger btn-sm" href="{% url 'cart:remove' item.id %}">Retirer</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="d-flex justify-content-between align-items-center">
+    <a class="btn btn-outline-danger" href="{% url 'cart:clear' %}">Vider le panier</a>
+    <div class="text-end"><div class="h4">Total : {{ cart.total }} DH</div><a class="btn btn-dark" href="{% url 'orders:checkout' %}">Valider la commande</a></div>
+  </div>
+{% else %}
+  <p>Votre panier est vide.</p>
+{% endif %}
+{% endblock %}

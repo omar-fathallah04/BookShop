@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Assistant IA{% endblock %}
+{% block content %}
+<section class="ai-hero mb-4">
+  <span class="section-kicker">Conseiller intelligent</span>
+  <h1 class="h2">Assistant IA de recherche de livres</h1>
+  <p class="text-muted mb-0">Decrivez votre besoin, votre niveau ou votre theme. L'IA compare votre demande avec les livres disponibles et propose les meilleurs choix.</p>
+</section>
+
+<form method="get" class="ai-search mb-4">
+  <label class="form-label fw-bold" for="q">Votre demande</label>
+  <div class="input-group input-group-lg">
+    <input id="q" class="form-control" name="q" value="{{ query }}" placeholder="Exemple : Je veux apprendre Django et Python">
+    <button class="btn btn-dark">Recommander</button>
+  </div>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    {% for example in examples %}
+      <a class="example-chip" href="?q={{ example|urlencode }}">{{ example }}</a>
+    {% endfor %}
+  </div>
+</form>
+
+{% if query %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Resultats IA</h2>
+    <span class="badge text-bg-dark">{{ recommendations|length }} suggestion(s)</span>
+  </div>
+  <div class="row g-4">
+    {% for product in recommendations %}
+      <div class="col-sm-6 col-lg-4">
+        <article class="product-card h-100">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.title }}">
+          {% else %}
+            <div class="book-cover">{{ product.title|slice:":18" }}</div>
+          {% endif %}
+          <div class="p-3">
+            <span class="section-kicker">{{ product.ai_score }}% compatible</span>
+            <h3 class="h5 mt-2"><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h3>
+            <p class="text-muted small mb-2">{{ product.ai_reason }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <strong>{{ product.price }} DH</strong>
+              <a class="btn btn-outline-dark btn-sm" href="{{ product.get_absolute_url }}">Voir</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    {% empty %}
+      <p class="text-muted">Aucune recommandation trouvee. Essayez une demande plus descriptive.</p>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

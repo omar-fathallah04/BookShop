@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Supprimer{% endblock %}
+{% block content %}
+<h1 class="h3">Supprimer {{ product.title }}</h1>
+<form method="post">{% csrf_token %}<button class="btn btn-danger">Confirmer</button> <a class="btn btn-outline-dark" href="{{ product.get_absolute_url }}">Annuler</a></form>
+{% endblock %}

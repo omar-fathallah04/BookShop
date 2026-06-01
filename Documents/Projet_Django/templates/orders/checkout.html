@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Validation{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Validation de la commande</h1>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <form method="post" class="vstack gap-3">{% csrf_token %}{{ form.as_p }}<button class="btn btn-dark">Confirmer la commande</button></form>
+  </div>
+  <div class="col-lg-5">
+    <div class="summary-box">
+      <h2 class="h5">Recapitulatif</h2>
+      {% for item in cart.items.all %}<div class="d-flex justify-content-between"><span>{{ item.product.title }} x {{ item.quantity }}</span><span>{{ item.subtotal }} DH</span></div>{% endfor %}
+      <hr><div class="d-flex justify-content-between fw-bold"><span>Total</span><span>{{ cart.total }} DH</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

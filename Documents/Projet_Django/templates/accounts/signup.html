@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Creation de compte{% endblock %}
+{% block content %}
+<div class="auth-box mx-auto">
+  <h1 class="h3 mb-3">Compte client</h1>
+  <form method="post" class="vstack gap-3">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-dark">Creer le compte</button>
+  </form>
+</div>
+{% endblock %}

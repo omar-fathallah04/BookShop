@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Mes favoris{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Mes livres favoris</h1>
+  <a class="btn btn-outline-dark btn-sm" href="{% url 'products:list' %}">Catalogue</a>
+</div>
+<div class="row g-4">
+  {% for favorite in favorites %}
+    {% with product=favorite.product %}
+      <div class="col-sm-6 col-lg-3">
+        <article class="product-card h-100">
+          {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.title }}">{% else %}<div class="book-cover">{{ product.title|slice:":18" }}</div>{% endif %}
+          <div class="p-3">
+            <span class="section-kicker">{{ product.category.name }}</span>
+            <h2 class="h6 mt-2"><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h2>
+            <p class="small text-muted">{{ product.author }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <strong>{{ product.price }} DH</strong>
+              <span class="badge text-bg-success">Favori</span>
+            </div>
+            <form method="post" action="{% url 'products:toggle_favorite' product.id %}" class="mt-2">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{% url 'products:favorites' %}">
+              <button class="btn btn-outline-danger btn-sm w-100">Retirer</button>
+            </form>
+          </div>
+        </article>
+      </div>
+    {% endwith %}
+  {% empty %}
+    <section class="contact-panel">
+      <h2 class="h4">Aucun favori pour le moment</h2>
+      <p class="text-muted">Ajoutez des livres depuis le catalogue pour construire votre selection personnelle.</p>
+      <a class="btn btn-dark" href="{% url 'products:list' %}">Explorer le catalogue</a>
+    </section>
+  {% endfor %}
+</div>
+{% endblock %}

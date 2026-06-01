@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ product.title }}{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-5">
+    {% if product.image %}<img class="detail-image" src="{{ product.image.url }}" alt="{{ product.title }}">{% else %}<div class="book-cover detail-cover">{{ product.title }}</div>{% endif %}
+  </div>
+  <div class="col-md-7">
+    <div class="text-muted">{{ product.category.name }}</div>
+    <h1 class="h2">{{ product.title }}</h1>
+    <p class="text-muted">Auteur : {{ product.author|default:"Non renseigne" }}</p>
+    <p>{{ product.description }}</p>
+    <p class="h4">{{ product.price }} DH</p>
+    <p>Note moyenne : {{ product.average_rating }}/5</p>
+    <div class="d-flex flex-wrap gap-2">
+      <form method="post" action="{% url 'cart:add' product.id %}">{% csrf_token %}
+        <button class="btn btn-dark" {% if not product.is_in_stock %}disabled{% endif %}>Ajouter au panier</button>
+      </form>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'products:toggle_favorite' product.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button class="btn btn-outline-dark">{% if is_favorite %}Retirer des favoris{% else %}Ajouter aux favoris{% endif %}</button>
+        </form>
+      {% endif %}
+    </div>
+    {% if user.is_staff %}
+      <div class="mt-3"><a class="btn btn-outline-dark btn-sm" href="{% url 'products:update' product.slug %}">Modifier</a> <a class="btn btn-outline-danger btn-sm" href="{% url 'products:delete' product.slug %}">Supprimer</a></div>
+    {% endif %}
+  </div>
+</div>
+<hr>
+<section class="mt-4">
+  <h2 class="h4">Avis clients</h2>
+  <div class="sentiment-box mb-3">
+    <span class="section-kicker">Analyse IA des avis</span>
+    <strong>{{ review_insight.label }}</strong>
+    <p class="mb-1">{{ review_insight.summary }}</p>
+    <small>Signaux positifs : {{ review_insight.positive }} | signaux negatifs : {{ review_insight.negative }}</small>
+  </div>
+  {% if user.is_authenticated %}
+    <form method="post" class="review-form mb-4">{% csrf_token %}{{ review_form.as_p }}<button class="btn btn-dark btn-sm">Publier</button></form>
+  {% endif %}
+  {% for review in product.reviews.all %}
+    <div class="border-bottom py-2"><strong>{{ review.user.username }}</strong> - {{ review.rating }}/5<br>{{ review.comment }}</div>
+  {% empty %}<p class="text-muted">Aucun avis pour le moment.</p>{% endfor %}
+</section>
+{% if recent_products %}
+<section class="mt-4">
+  <h2 class="h4">Recemment consultes</h2>
+  <div class="category-strip">
+    {% for item in recent_products %}
+      <a href="{{ item.get_absolute_url }}">{{ item.title }} <span>{{ item.price }} DH</span></a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+<section class="ai-panel mt-4">
+  <div class="d-flex flex-column flex-lg-row justify-content-between gap-2 mb-3">
+    <div>
+      <span class="section-kicker">IA integree</span>
+      <h2 class="h4 mb-1">Recommandations intelligentes</h2>
+      <p class="text-muted mb-0">Suggestions calculees par TF-IDF et similarite cosinus selon la description, la categorie, l'auteur, le prix et les avis.</p>
+    </div>
+  </div>
+  <div class="row g-3">
+    {% for item in recommendations %}
+      <div class="col-sm-6 col-lg-3">
+        <a class="recommendation" href="{{ item.get_absolute_url }}">
+          <strong>{{ item.title }}</strong>
+          <span>{{ item.price }} DH</span>
+          <small>{{ item.ai_reason }}</small>
+          <em>{{ item.ai_score }}% compatible</em>
+        </a>
+      </div>
+    {% empty %}<p class="text-muted">Ajoutez plus de livres pour activer les recommandations.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

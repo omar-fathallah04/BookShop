@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Accueil - BookShop Django{% endblock %}
+{% block content %}
+<section class="hero rounded-2 p-4 p-lg-5 mb-4">
+  <div class="col-lg-8">
+    <h1 class="display-5 fw-bold">BookShop Django</h1>
+    <p class="lead">Une plateforme e-commerce moderne pour vendre des livres, gerer les commandes et recommander automatiquement des ouvrages similaires.</p>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-dark btn-lg" href="{% url 'products:list' %}">Explorer le catalogue</a>
+      <a class="btn btn-light btn-lg" href="{% url 'recommendation:assistant' %}">Assistant IA</a>
+    </div>
+  </div>
+</section>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="metric"><span>Livres</span><strong>{{ stats.products }}</strong></div></div>
+  <div class="col-md-4"><div class="metric"><span>Categories</span><strong>{{ stats.categories }}</strong></div></div>
+  <div class="col-md-4"><div class="metric"><span>Disponibles</span><strong>{{ stats.available }}</strong></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-md-4"><div class="info-box">Catalogue avec recherche, filtres et tri.</div></div>
+  <div class="col-md-4"><div class="info-box">Panier, commandes et suivi des statuts.</div></div>
+  <div class="col-md-4"><div class="info-box">Recommandation IA avec TF-IDF et similarite cosinus.</div></div>
+</div>
+<section class="contact-panel mt-4">
+  <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center">
+    <div>
+      <span class="section-kicker">Nouveaute IA</span>
+      <h2 class="h4 mb-1">Assistant intelligent de recherche</h2>
+      <p class="text-muted mb-0">Demandez un livre selon un theme, un niveau ou un objectif, puis laissez l'IA proposer les meilleurs choix.</p>
+    </div>
+    <a class="btn btn-dark" href="{% url 'recommendation:assistant' %}">Essayer l'assistant IA</a>
+  </div>
+</section>
+<section class="mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Livres populaires</h2>
+    <a class="btn btn-outline-dark btn-sm" href="{% url 'products:list' %}">Voir tout</a>
+  </div>
+  <div class="row g-4">
+    {% for product in popular_products %}
+      <div class="col-sm-6 col-lg-3">
+        <article class="product-card h-100">
+          {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.title }}">{% else %}<div class="book-cover">{{ product.title|slice:":18" }}</div>{% endif %}
+          <div class="p-3">
+            <span class="section-kicker">{{ product.category.name }}</span>
+            <h3 class="h6 mt-2"><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h3>
+            <div class="d-flex justify-content-between align-items-center">
+              <strong>{{ product.price }} DH</strong>
+              <span class="favorite-count">{{ product.favorite_count|default:0 }} favori(s)</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+<section class="mt-4">
+  <h2 class="h4 mb-3">Categories vivantes</h2>
+  <div class="category-strip">
+    {% for category in categories %}
+      <a href="{% url 'products:list' %}?category={{ category.slug }}">{{ category.name }} <span>{{ category.products_count }}</span></a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

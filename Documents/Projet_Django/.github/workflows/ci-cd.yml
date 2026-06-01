@@ -1,0 +1,81 @@
+name: Django CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ecommerce_db
+          POSTGRES_USER: ecommerce_user
+          POSTGRES_PASSWORD: ecommerce_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint
+        run: flake8 . --exclude=.venv,venv,migrations --max-line-length=120
+
+      - name: Migrate
+        env:
+          DEBUG: "False"
+          SECRET_KEY: ci-secret-key
+          DB_NAME: ecommerce_db
+          DB_USER: ecommerce_user
+          DB_PASSWORD: ecommerce_password
+          DB_HOST: localhost
+          DB_PORT: "5432"
+        run: python manage.py migrate --noinput
+
+      - name: Tests
+        env:
+          DEBUG: "False"
+          SECRET_KEY: ci-secret-key
+          DB_NAME: ecommerce_db
+          DB_USER: ecommerce_user
+          DB_PASSWORD: ecommerce_password
+          DB_HOST: localhost
+          DB_PORT: "5432"
+        run: python manage.py test
+
+      - name: Build Docker image
+        run: docker build -t bookshop-django:${{ github.sha }} .
+
+      - name: Login to Docker Hub
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Publish Docker image to Docker Hub
+        if: github.event_name == 'push'
+        run: |
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/bookshop-django
+          docker tag bookshop-django:${{ github.sha }} $IMAGE:${{ github.sha }}
+          docker tag bookshop-django:${{ github.sha }} $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest

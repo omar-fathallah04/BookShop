@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">{{ title }}</h1>
+<p class="text-muted">Ajoutez le titre, l'auteur, le prix, le stock et une image de couverture. Le lien du livre est genere automatiquement.</p>
+<form method="post" enctype="multipart/form-data" class="vstack gap-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-dark">Enregistrer</button>
+</form>
+{% endblock %}

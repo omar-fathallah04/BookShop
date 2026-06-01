@@ -1,0 +1,36 @@
+@startuml
+left to right direction
+actor Visiteur
+actor Client
+actor Administrateur
+
+rectangle "BookShop Django" {
+  usecase "Consulter accueil" as UC1
+  usecase "Rechercher et filtrer livres" as UC2
+  usecase "Consulter detail livre" as UC3
+  usecase "Creer compte" as UC4
+  usecase "Gerer profil" as UC5
+  usecase "Gerer panier" as UC6
+  usecase "Passer commande" as UC7
+  usecase "Consulter commandes" as UC8
+  usecase "Laisser avis" as UC9
+  usecase "Gerer produits/categories" as UC10
+  usecase "Modifier statut commande" as UC11
+  usecase "Consulter statistiques" as UC12
+  usecase "Voir recommandations IA" as UC13
+}
+
+Visiteur --> UC1
+Visiteur --> UC2
+Visiteur --> UC3
+Visiteur --> UC4
+Client --> UC5
+Client --> UC6
+Client --> UC7
+Client --> UC8
+Client --> UC9
+Client --> UC13
+Administrateur --> UC10
+Administrateur --> UC11
+Administrateur --> UC12
+@enduml

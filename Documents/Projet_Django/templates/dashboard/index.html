@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Tableau de bord administrateur</h1>
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="metric"><span>Produits</span><strong>{{ products_count }}</strong></div></div>
+  <div class="col-md-3"><div class="metric"><span>Clients</span><strong>{{ clients_count }}</strong></div></div>
+  <div class="col-md-3"><div class="metric"><span>Commandes</span><strong>{{ orders_count }}</strong></div></div>
+  <div class="col-md-3"><div class="metric"><span>Chiffre d'affaires</span><strong>{{ revenue }} DH</strong></div></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <h2 class="h5">Produits les plus vendus</h2>
+    <ul class="list-group">{% for item in best_sellers %}<li class="list-group-item d-flex justify-content-between"><span>{{ item.product__title }}</span><span>{{ item.total_sold }}</span></li>{% empty %}<li class="list-group-item">Aucune vente</li>{% endfor %}</ul>
+  </div>
+  <div class="col-lg-4">
+    <h2 class="h5">Commandes par statut</h2>
+    <ul class="list-group">{% for item in status_counts %}<li class="list-group-item d-flex justify-content-between"><span>{{ item.status }}</span><span>{{ item.total }}</span></li>{% empty %}<li class="list-group-item">Aucune commande</li>{% endfor %}</ul>
+  </div>
+  <div class="col-lg-4">
+    <h2 class="h5">Commandes recentes</h2>
+    <ul class="list-group">{% for order in recent_orders %}<li class="list-group-item">#{{ order.id }} - {{ order.user.username }} - {{ order.total_amount }} DH</li>{% empty %}<li class="list-group-item">Aucune commande</li>{% endfor %}</ul>
+  </div>
+</div>
+{% endblock %}

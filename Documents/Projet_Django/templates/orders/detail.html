@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Commande #{{ order.id }}{% endblock %}
+{% block content %}
+<h1 class="h3">Commande #{{ order.id }}</h1>
+<p>Statut : <strong>{{ order.get_status_display }}</strong></p>
+<p>{{ order.full_name }} - {{ order.phone }}<br>{{ order.address }}, {{ order.city }}</p>
+<table class="table">
+  <thead><tr><th>Livre</th><th>Quantite</th><th>Prix unitaire</th><th>Total</th></tr></thead>
+  <tbody>{% for item in order.items.all %}<tr><td>{{ item.product.title }}</td><td>{{ item.quantity }}</td><td>{{ item.unit_price }} DH</td><td>{{ item.subtotal }} DH</td></tr>{% endfor %}</tbody>
+</table>
+<div class="h4 text-end">Total : {{ order.total_amount }} DH</div>
+{% endblock %}

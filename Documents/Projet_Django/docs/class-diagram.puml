@@ -1,0 +1,56 @@
+@startuml
+class User
+class CustomerProfile {
+  phone
+  address
+  city
+  postal_code
+}
+class Category {
+  name
+  slug
+  description
+}
+class Product {
+  title
+  author
+  description
+  price
+  stock_quantity
+  available
+  average_rating()
+}
+class Cart {
+  total()
+}
+class CartItem {
+  quantity
+  subtotal()
+}
+class Order {
+  total_amount
+  status
+  created_at
+  create_from_cart()
+}
+class OrderItem {
+  quantity
+  unit_price
+  subtotal()
+}
+class Review {
+  rating
+  comment
+}
+
+User "1" -- "1" CustomerProfile
+Category "1" -- "*" Product
+User "1" -- "1" Cart
+Cart "1" -- "*" CartItem
+Product "1" -- "*" CartItem
+User "1" -- "*" Order
+Order "1" -- "*" OrderItem
+Product "1" -- "*" OrderItem
+User "1" -- "*" Review
+Product "1" -- "*" Review
+@enduml
