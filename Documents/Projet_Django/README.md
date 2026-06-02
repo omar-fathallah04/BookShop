@@ -26,7 +26,7 @@ python manage.py seed_books
 python manage.py runserver
 ```
 
-Application : `http://127.0.0.1:8000/`
+Application : `http://127.0.0.1:8022/`
 
 ## Docker Compose
 
@@ -36,7 +36,7 @@ Un fichier `.env` local est fourni pour lancer Docker directement. Il connecte D
 docker compose up --build
 ```
 
-Application via Django : `http://127.0.0.1:8000/`  
+Application via Django : `http://127.0.0.1:8022/`  
 Application via Nginx : `http://127.0.0.1:8080/`
 
 Commandes utiles :

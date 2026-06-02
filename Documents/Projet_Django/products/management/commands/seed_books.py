@@ -23,6 +23,20 @@ BOOKS = [
     ),
     ("Gestion de Projet Agile", "Karim Lead", "Management", 140, "Scrum, Kanban, planification et pilotage d'equipe."),
     ("Design UX Simple", "Lina Studio", "Design", 160, "Methodes UX, interfaces lisibles et experience utilisateur."),
+    (
+        "SEO et Marketing Digital",
+        "Rachid Online",
+        "Marketing",
+        130,
+        "Strategies SEO, publicite en ligne et conversion des visiteurs.",
+    ),
+    (
+        "Histoire du Maroc",
+        "Fatima El-Kheir",
+        "Histoire",
+        120,
+        "Recit vivant des evenements marquants et des personnages influents du Maroc.",
+    ),
 ]
 
 

@@ -9,14 +9,17 @@
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - bookshop_net
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
-      interval: 10s
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/3306"]
+      interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 5
+      start_period: 15s
 
   web:
-    image: omar968/projet-django-web:v1
+    image: omar968/projet-django-web:v2
     restart: unless-stopped
     env_file:
       - .env
@@ -25,6 +28,15 @@
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - bookshop_net
 
 volumes:
   db_data:
+
+networks:
+  bookshop_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.122.0.0/16
